@@ -1,0 +1,298 @@
+crie um bot que serve para receber pagamentos
+e sacar o dinheiro de pagamentos ok
+
+tipo um gateway de pagamentos mais é um bot em python apenas pythone para telegram ok
+
+taxas do gateway que é descontado ok
+
+a cada deposito é descontado 1 real
+a cada saque é descontado 0,50
+
+e no painel admin mostrar quanto o adm tem em taxas no gateway para poder sacar ok
+ai ele pode sacar o dinheiro do adm usando o comando /sacar ai o adm sacar suas taxas ok
+
+no bot do gateway o nome é nuvix pay ok do bot
+
+mensagem inicial do bot:
+🏦 Nuvixpay - Seu Gateway Digital
+
+👤 Informações da Conta
+├ ID: id do usuario
+├ Saldo: R$ saldo do usuario aqui
+└ Atualizado: Horas/data ok
+
+e uma imagem que fica embaixo da mensagem ok a imagem fica junto com a mensagem ok
+
+usando esse componente f"""<a href="https://xatimg.com/image/4MAmT3rlXAZz.png">‌</a><b>
+
+ai ele aparece deixando da mensagem ok a imagem mesmo
+
+botões inline da mensagem são
+
+Deposito que ao clicar ele pede um valor e gerar o pix e verificar a cada segundos ok
+
+saque onde a pessoa coloca como quer sacar normal ou crypto ok
+
+e colocoa o valor e sacar automatico ja
+
+perfil
+
+que ao clicar mostrar seu perfil com id, @ do user, nome do user e saldo disponivel do user ok
+
+apenas isso mesmo no bot
+
+painel adm deixe com varias funções como aprovar usuario, notificações de deposito e saque de usuario ok
+
+etc............
+
+TOKEN DO BOT: 8211731933:AAG7CSbxtCp9jDW77ikPKowHH-Sx3R95Iho
+ID DO ADMIN: 7896147898
+
+API E DOCUMENTAÇÃO PARA GERAR O PIX E SACAR E VERIFICAR O PIX OK
+
+cliente id: ci_hbuy5bjdcgfpabv
+cliente secret: cs_x5uighxhuckyo7jgv3xl090bj
+
+DOCUMENTAÇÃO:
+
+Autenticação
+Conceito
+A API da MisticPay utiliza autenticação baseada em Client ID + Client Secret. Cada requisição deve incluir dois headers essenciais:
+
+Importante
+Nunca exponha sua Client Secret no frontend ou em repositórios públicos. Ela deve ser armazenada de forma segura no backend.
+
+URL Base da API
+Todas as requisições devem ser enviadas para a seguinte URL base:
+
+URL Base
+https://api.misticpay.com/api
+Headers Obrigatórios
+Headers HTTP
+Copiar
+ci: seu_client_id
+cs: seu_client_secret
+
+Content-Type: application/json
+
+Gerar transação
+POST
+/api/transactions/create
+cashin
+Cria uma nova transação PIX para receber pagamento de um cliente. Retorna QR Code e dados da transação.
+
+Parâmetros
+Parâmetro Tipo Descrição
+amount * number Valor em reais para receber. Ex: 4.55 = R$ 4,55
+payerName * string Nome do pagador da transação
+payerDocument * string Documento CPF do pagador (sem formatação: 12345678909)
+transactionId * string ID da sua aplicação para identificação da transação
+description * string Descrição do pagamento
+projectWebhook string URL do webhook (opcional)
+splitUser string Email do usuário na plataforma que receberá a divisão (opcional)
+splitTax number Porcentagem da taxa de divisão (opcional)
+Exemplo de Requisição
+cURL
+Copiar
+curl -X POST 'https://api.misticpay.com/api/transactions/create'
+--header 'ci: seu_client_id'
+--header 'cs: seu_client_secret'
+--header 'Content-Type: application/json'
+--data '{
+"amount": 5,
+"payerName": "Nome do cliente",
+"payerDocument": "12345678909",
+"transactionId": "id_da_sua_aplicacao_para_identificacao",
+"description": "Pagamento do cliente TAL"
+}'
+Exemplo de Resposta
+JSON
+{
+"message": "Transação criada com sucesso",
+"data": {
+"transactionId": "31484480",
+"payer": {
+"name": "Nome do cliente",
+"document": "12345678909"
+},
+"transactionFee": 23,
+"transactionType": "DEPOSITO",
+"transactionMethod": "PIX",
+"transactionAmount": 455,
+"transactionState": "PENDENTE",
+"qrCodeBase64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAcgAAAHICAY...",
+"qrcodeUrl": "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=...",
+"copyPaste": "00020101021226820014br.gov.bcb.pix2560qrcode.pagsm.com.br/pix/..."
+}
+}
+
+Solicitar saque
+POST
+/api/transactions/withdraw
+cashout
+Solicita um saque via PIX para uma chave PIX. O valor será debitado do saldo disponível. Suporta chaves PIX tradicionais (CPF, CNPJ, Email, Telefone, Chave Aleatória).
+
+Parâmetros
+Parâmetro	Tipo	Descrição
+amount *	number	Valor em reais para receber. Ex: 100 = R$ 100,00
+pixKey *	string	Chave PIX do destinatário (sem formatação: 12345678909).
+pixKeyType *	string	Tipo da chave PIX: "CPF", "CNPJ", "EMAIL", "TELEFONE", "CHAVE_ALEATORIA"
+description *	string	Descrição do pagamento
+projectWebhook	string	URL do webhook para notificações (opcional)
+Exemplo de Requisição
+cURL
+Copiar
+curl -X POST 'https://api.misticpay.com/api/transactions/withdraw' \
+  --header 'ci: seu_client_id' \
+  --header 'cs: seu_client_secret' \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "amount": 1,
+  "pixKey": "12345678909",
+  "pixKeyType": "CPF",
+  "description": "saque com id",
+  "projectWebhook": "https://webhooktrack.com/api/webhook/bZ_7mnNS"
+}'
+Exemplo de Resposta
+JSON
+Copiar
+{
+  "message": "Saque adicionado à fila de processamento",
+  "data": {
+    "jobId": "withdraw-4-1764365277110-jxqfvna",
+    "transactionId": 54345,
+    "status": "QUEUED",
+    "message": "Seu saque será processado em breve"
+  }
+}
+Solicitar saque crypto
+POST
+/api/crypto/withdraw-api
+cashout
+Solicita um saque em criptomoeda (USDT BEP20) para uma wallet. O valor será debitado do saldo disponível e convertido para USDT.
+
+💡 Informações importantes:
+Valor mínimo: R$ 20,00
+Valor máximo: R$ 3.000,00
+Taxa da plataforma: 5% sobre o valor
+Taxa de rede: variável (calculada automaticamente)
+Wallet deve ser válida no formato BEP20 (0x...)
+
+Parâmetros
+Parâmetro	Tipo	Descrição
+amount *	number	Valor em reais para sacar. Ex: 100 = R$ 100,00 (mínimo R$ 20,00, máximo R$ 3.000,00)
+wallet *	string	Endereço da wallet BEP20 para receber USDT (formato: 0x seguido de 40 caracteres hexadecimais)
+projectWebhook	string	URL do webhook para notificações (opcional)
+Exemplo de Requisição
+cURL
+Copiar
+curl -X POST 'https://api.misticpay.com/api/crypto/withdraw-api' \
+  --header 'ci: seu_client_id' \
+  --header 'cs: seu_client_secret' \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "amount": 100,
+  "wallet": "0x1234567890123456789012345678901234567890",
+  "projectWebhook": "https://webhook.example.com/api/webhook"
+}'
+Exemplo de Resposta
+JSON
+Copiar
+{
+  "message": "Saque crypto adicionado à fila de processamento",
+  "data": {
+    "jobId": "crypto-withdraw-4-1764365277110-jxqfvna",
+    "transactionId": 54345,
+    "status": "QUEUED",
+    "message": "Seu saque crypto será processado em breve"
+  }
+}
+Consultar taxas de cripto
+GET
+/api/crypto/fees
+info
+Consulta informações sobre as taxas de cripto, incluindo taxa da plataforma, taxa de rede e cotação atual.
+
+💡 Informações importantes:
+Taxa da plataforma: 3% sobre o valor informado
+Taxa de rede: R$ 3,00 (fixa, apenas para informação - já descontada automaticamente pela rede)
+Inclui cotação atual BRL/USD
+
+Exemplo de Requisição
+cURL
+Copiar
+curl -X GET 'https://api.misticpay.com/api/crypto/fees' \
+  --header 'ci: seu_client_id' \
+  --header 'cs: seu_client_secret' \
+  --header 'Content-Type: application/json'
+Exemplo de Resposta
+JSON
+Copiar
+{
+  "message": "Taxas obtidas com sucesso",
+  "data": {
+    "quote": {
+      "brlPerUSD": 5.25,
+      "networkFee": 3.0,
+      "fixedFeeUSDT": 0.5,
+      "timestamp": "2024-01-01T00:00:00.000Z"
+    },
+    "fees": {
+      "platformFeePercentage": 3,
+      "networkFee": 3.0
+    }
+  }
+}
+Verificar transação
+POST
+/api/transactions/check
+Consulte o status e detalhes de uma transação específica.
+
+⚠️ Rate Limit: Esta rota possui rate limit de 60 requisições por minuto por IP. Requisições que excederem este limite retornarão erro 429.
+
+Parâmetros
+Parâmetro	Tipo	Descrição
+transactionId *	string | number	ID da transação a ser verificada
+Exemplo de Requisição
+cURL
+Copiar
+curl -X POST 'https://api.misticpay.com/api/transactions/check' \
+  --header 'ci: seu_client_id' \
+  --header 'cs: seu_client_secret' \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "transactionId": "54345"
+}'
+Exemplo de Resposta
+JSON
+Copiar
+{
+  "message": "Transação encontrada com sucesso!",
+  "transaction": {
+    "transactionId": "301124932.60430735",
+    "value": 1.12,
+    "fee": 0.31,
+    "transactionState": "COMPLETO",
+    "transactionType": "DEPOSITO",
+    "transactionMethod": "PIX",
+    "createdAt": "2025-12-02T01:20:18.475Z",
+    "updatedAt": "2025-12-02T01:20:53.002Z"
+  }
+}
+Status Possíveis
+Status	Descrição
+PENDENTE	Transação pendente, aguardando pagamento
+COMPLETO	Transação aprovada e concluída com sucesso
+FALHA	Transação falhou ou foi rejeitada
+
+no saque quando clica a taxa é descontado ok deposito desconta 1 real e saque 0,50 centavos
+
+minimo de deposito é 3 reais minimo de saque é 4 reais
+
+ no saque quando criar nele no pix ele deve pedir a chave pix em botão inline tipo
+
+CPF
+ALEATORIA
+ETC...........
+
+
